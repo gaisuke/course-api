@@ -1,0 +1,1 @@
+DROP table class_rooms;

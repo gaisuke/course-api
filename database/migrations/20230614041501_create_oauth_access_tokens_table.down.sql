@@ -1,0 +1,1 @@
+DROP table oauth_access_tokens;
