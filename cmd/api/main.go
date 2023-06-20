@@ -1,7 +1,25 @@
 package main
 
-import "course-api/pkg/db/mysql"
+import (
+	userRepository "course-api/internal/user/repository"
+	userUsecase "course-api/internal/user/usecase"
+	"course-api/pkg/db/mysql"
+
+	registerHandler "course-api/internal/register/delivery/http"
+	registerUsecase "course-api/internal/register/usecase"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
-	mysql.DB()
+	r := gin.Default()
+	db := mysql.DB()
+
+	userRepository := userRepository.NewUserRepository(db)
+	userUsecase := userUsecase.NewUserUsecase(userRepository)
+
+	registerUsecase := registerUsecase.NewRegisterUsecase(userUsecase)
+	registerHandler.NewRegisterHandler(registerUsecase).Route(&r.RouterGroup)
+
+	r.Run()
 }
