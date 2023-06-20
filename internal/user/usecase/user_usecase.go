@@ -78,8 +78,8 @@ func (*userUsecase) FindAll(offset int, limit int) []entity.User {
 }
 
 // FindByEmail implements UserUsecase.
-func (*userUsecase) FindByEmail(email string) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (usecase *userUsecase) FindByEmail(email string) (*entity.User, *response.Error) {
+	return usecase.repository.FindByEmail(email)
 }
 
 // FindOneByCodeVerified implements UserUsecase.
