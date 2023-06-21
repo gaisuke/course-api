@@ -11,6 +11,7 @@ import (
 	register2 "course-api/internal/register/usecase"
 	"course-api/internal/user/repository"
 	"course-api/internal/user/usecase"
+	"course-api/pkg/mail/sendgrid"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +20,8 @@ import (
 func InitializedService(db *gorm.DB) *register.RegisterHandler {
 	userRepository := user.NewUserRepository(db)
 	userUsecase := usecase.NewUserUsecase(userRepository)
-	registerUsecase := register2.NewRegisterUsecase(userUsecase)
+	mailMail := mail.NewMailUsecase()
+	registerUsecase := register2.NewRegisterUsecase(userUsecase, mailMail)
 	registerHandler := register.NewRegisterHandler(registerUsecase)
 	return registerHandler
 }
