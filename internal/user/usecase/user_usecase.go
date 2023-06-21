@@ -18,7 +18,7 @@ type UserUsecase interface {
 	FindOneById(id int) (*entity.User, *response.Error)
 	Create(dto dto.UserRequestBody) (*entity.User, *response.Error)
 	FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error)
-	Update(id int, dto dto.UserRequestBody) (*entity.User, *response.Error)
+	Update(id int, dto dto.UserUpdateRequestBody) (*entity.User, *response.Error)
 	Delete(id int) *response.Error
 	TotalCountUser() int64
 }
@@ -88,8 +88,8 @@ func (*userUsecase) FindOneByCodeVerified(codeVerified string) (*entity.User, *r
 }
 
 // FindOneById implements UserUsecase.
-func (*userUsecase) FindOneById(id int) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (usecase *userUsecase) FindOneById(id int) (*entity.User, *response.Error) {
+	return usecase.repository.FindOneById(id)
 }
 
 // TotalCountUser implements UserUsecase.
@@ -98,8 +98,30 @@ func (*userUsecase) TotalCountUser() int64 {
 }
 
 // Update implements UserUsecase.
-func (*userUsecase) Update(id int, dto dto.UserRequestBody) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (usecase *userUsecase) Update(id int, dto dto.UserUpdateRequestBody) (*entity.User, *response.Error) {
+	// find by id first, then update
+	user, err := usecase.repository.FindOneById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if dto.Password != nil {
+		hashedPassword, errHashedPassword := bcrypt.GenerateFromPassword([]byte(*dto.Password), bcrypt.DefaultCost)
+		if errHashedPassword != nil {
+			return nil, &response.Error{
+				Code: 500,
+				Err:  errHashedPassword,
+			}
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	updateUser, err := usecase.repository.Update(*user)
+	if err != nil {
+		return nil, err
+	}
+
+	return updateUser, nil
 }
 
 func NewUserUsecase(repository repository.UserRepository) UserUsecase {

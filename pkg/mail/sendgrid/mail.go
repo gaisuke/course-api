@@ -2,6 +2,7 @@ package mail
 
 import (
 	"bytes"
+	forgotPasswordDto "course-api/internal/forgot_password/dto"
 	registerDto "course-api/internal/register/dto"
 	"fmt"
 	"os"
@@ -14,9 +15,23 @@ import (
 
 type Mail interface {
 	SendVerification(toEmail string, data registerDto.EmailVerification)
+	SendForgotPassword(toEmail string, data forgotPasswordDto.ForgotPasswordEmailRequestBody)
 }
 
 type mailUsecase struct {
+}
+
+// SendForgotPassword implements Mail.
+func (usecase *mailUsecase) SendForgotPassword(toEmail string, data forgotPasswordDto.ForgotPasswordEmailRequestBody) {
+	cwd, _ := os.Getwd()
+	templateFile := filepath.Join(cwd, "/templates/emails/forgot_password.html")
+
+	result, err := ParseTemplate(templateFile, data)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		usecase.sendMail(toEmail, data.SUBJECT, result)
+	}
 }
 
 // SendVerification implements Mail.

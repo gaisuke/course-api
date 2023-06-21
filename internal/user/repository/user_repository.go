@@ -64,8 +64,15 @@ func (*userRepository) FindOneByCodeVerified(codeVerified string) (*entity.User,
 }
 
 // FindOneById implements UserRepository.
-func (*userRepository) FindOneById(id int) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (repository *userRepository) FindOneById(id int) (*entity.User, *response.Error) {
+	var user entity.User
+	if err := repository.db.First(&user, id).Error; err != nil {
+		return nil, &response.Error{
+			Code: 500,
+			Err:  err,
+		}
+	}
+	return &user, nil
 }
 
 // TotalCountUser implements UserRepository.
@@ -74,8 +81,14 @@ func (*userRepository) TotalCountUser() int64 {
 }
 
 // Update implements UserRepository.
-func (*userRepository) Update(user entity.User) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (repository *userRepository) Update(user entity.User) (*entity.User, *response.Error) {
+	if err := repository.db.Save(&user).Error; err != nil {
+		return nil, &response.Error{
+			Code: 500,
+			Err:  err,
+		}
+	}
+	return &user, nil
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {

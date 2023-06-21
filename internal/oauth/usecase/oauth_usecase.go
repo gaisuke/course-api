@@ -57,8 +57,8 @@ func (usecase *oauthUsecase) Login(dtoLoginRequest dto.LoginRequestBody) (*dto.L
 
 	if errorBcrypt != nil {
 		return nil, &response.Error{
-			Code: 500,
-			Err:  errorBcrypt,
+			Code: 400,
+			Err:  errors.New("invalid email or password"),
 		}
 	}
 

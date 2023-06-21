@@ -3,6 +3,7 @@ package main
 import (
 	"course-api/pkg/db/mysql"
 
+	forgotPassword "course-api/internal/forgot_password/injector"
 	oauth "course-api/internal/oauth/injector"
 	register "course-api/internal/register/injector"
 
@@ -15,6 +16,7 @@ func main() {
 
 	register.InitializedService(db).Route(&r.RouterGroup)
 	oauth.InitializedService(db).Route(&r.RouterGroup)
+	forgotPassword.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run()
 }
