@@ -3,6 +3,9 @@ package utils
 import (
 	"math/rand"
 
+	oauthDto "course-api/internal/oauth/dto"
+
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -39,4 +42,9 @@ func Paginate(offset, limit int) func(db *gorm.DB) *gorm.DB {
 		offset = (page - 1) * pageSize
 		return db.Offset(offset).Limit(pageSize)
 	}
+}
+
+func GetCurrentUser(ctx *gin.Context) *oauthDto.MapClaimsResponse {
+	user, _ := ctx.Get("user")
+	return user.(*oauthDto.MapClaimsResponse)
 }
