@@ -11,7 +11,7 @@ import (
 
 type AdminUsecase interface {
 	FindAll(offset, limit int) []entity.Admin
-	FindOneByID(id int) (*entity.Admin, *response.Error)
+	FindOneById(id int) (*entity.Admin, *response.Error)
 	FindOneByEmail(email string) (*entity.Admin, *response.Error)
 	Create(dto dto.AdminRequestBody) (*entity.Admin, *response.Error)
 	Update(id int, dto dto.AdminRequestBody) (*entity.Admin, *response.Error)
@@ -49,7 +49,7 @@ func (usecase *adminUsecase) Create(dto dto.AdminRequestBody) (*entity.Admin, *r
 
 // Delete implements AdminUsecase.
 func (usecase *adminUsecase) Delete(id int) *response.Error {
-	admin, err := usecase.repository.FindOneByID(id)
+	admin, err := usecase.repository.FindOneById(id)
 	if err != nil {
 		return err
 	}
@@ -71,9 +71,9 @@ func (usecase *adminUsecase) FindOneByEmail(email string) (*entity.Admin, *respo
 	return usecase.repository.FindOneByEmail(email)
 }
 
-// FindOneByID implements AdminUsecase.
-func (usecase *adminUsecase) FindOneByID(id int) (*entity.Admin, *response.Error) {
-	return usecase.repository.FindOneByID(id)
+// FindOneById implements AdminUsecase.
+func (usecase *adminUsecase) FindOneById(id int) (*entity.Admin, *response.Error) {
+	return usecase.repository.FindOneById(id)
 }
 
 // TotalCountAdmin implements AdminUsecase.
@@ -83,7 +83,7 @@ func (*adminUsecase) TotalCountAdmin() int64 {
 
 // Update implements AdminUsecase.
 func (usecase *adminUsecase) Update(id int, dto dto.AdminRequestBody) (*entity.Admin, *response.Error) {
-	admin, err := usecase.repository.FindOneByID(id)
+	admin, err := usecase.repository.FindOneById(id)
 	if err != nil {
 		return nil, err
 	}

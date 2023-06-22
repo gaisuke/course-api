@@ -106,7 +106,7 @@ func (handler *AdminHandler) FindAll(ctx *gin.Context) {
 func (handler *AdminHandler) FindOneByID(ctx *gin.Context) {
 	id, _ := strconv.Atoi(ctx.Param("id"))
 
-	data, err := handler.usecase.FindOneByID(id)
+	data, err := handler.usecase.FindOneById(id)
 	if err != nil {
 		ctx.JSON(int(err.Code), response.Response(
 			int(err.Code),

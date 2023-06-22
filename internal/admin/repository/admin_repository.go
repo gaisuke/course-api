@@ -10,7 +10,7 @@ import (
 
 type AdminRepository interface {
 	FindAll(offset, limit int) []entity.Admin
-	FindOneByID(id int) (*entity.Admin, *response.Error)
+	FindOneById(id int) (*entity.Admin, *response.Error)
 	FindOneByEmail(email string) (*entity.Admin, *response.Error)
 	Create(entity entity.Admin) (*entity.Admin, *response.Error)
 	Update(entity entity.Admin) (*entity.Admin, *response.Error)
@@ -69,8 +69,8 @@ func (repository *adminRepository) FindOneByEmail(email string) (*entity.Admin, 
 	return &admin, nil
 }
 
-// FindOneByID implements AdminRepository.
-func (repository *adminRepository) FindOneByID(id int) (*entity.Admin, *response.Error) {
+// FindOneById implements AdminRepository.
+func (repository *adminRepository) FindOneById(id int) (*entity.Admin, *response.Error) {
 	var admin entity.Admin
 
 	if err := repository.db.First(&admin, id).Error; err != nil {
