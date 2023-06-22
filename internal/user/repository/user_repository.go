@@ -11,10 +11,10 @@ type UserRepository interface {
 	FindAll(offset int, limit int) []entity.User
 	FindOneById(id int) (*entity.User, *response.Error)
 	FindByEmail(email string) (*entity.User, *response.Error)
-	Create(user entity.User) (*entity.User, *response.Error)
+	Create(entity entity.User) (*entity.User, *response.Error)
 	FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error)
-	Update(user entity.User) (*entity.User, *response.Error)
-	Delete(user entity.User) (*entity.User, *response.Error)
+	Update(entity entity.User) (*entity.User, *response.Error)
+	Delete(entity entity.User) (*entity.User, *response.Error)
 	TotalCountUser() int64
 }
 
@@ -23,19 +23,19 @@ type userRepository struct {
 }
 
 // Create implements UserRepository.
-func (repository *userRepository) Create(user entity.User) (*entity.User, *response.Error) {
-	if err := repository.db.Create(&user).Error; err != nil {
+func (repository *userRepository) Create(entity entity.User) (*entity.User, *response.Error) {
+	if err := repository.db.Create(&entity).Error; err != nil {
 		return nil, &response.Error{
 			Code: 500,
 			Err:  err,
 		}
 	}
 
-	return &user, nil
+	return &entity, nil
 }
 
 // Delete implements UserRepository.
-func (*userRepository) Delete(user entity.User) (*entity.User, *response.Error) {
+func (*userRepository) Delete(entity entity.User) (*entity.User, *response.Error) {
 	panic("unimplemented")
 }
 
@@ -81,14 +81,14 @@ func (*userRepository) TotalCountUser() int64 {
 }
 
 // Update implements UserRepository.
-func (repository *userRepository) Update(user entity.User) (*entity.User, *response.Error) {
-	if err := repository.db.Save(&user).Error; err != nil {
+func (repository *userRepository) Update(entity entity.User) (*entity.User, *response.Error) {
+	if err := repository.db.Save(&entity).Error; err != nil {
 		return nil, &response.Error{
 			Code: 500,
 			Err:  err,
 		}
 	}
-	return &user, nil
+	return &entity, nil
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
