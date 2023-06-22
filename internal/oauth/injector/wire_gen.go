@@ -7,6 +7,8 @@
 package oauth
 
 import (
+	"course-api/internal/admin/repository"
+	admin2 "course-api/internal/admin/usecase"
 	"course-api/internal/oauth/delivery/http"
 	oauth2 "course-api/internal/oauth/repository"
 	oauth3 "course-api/internal/oauth/usecase"
@@ -23,7 +25,9 @@ func InitializedService(db *gorm.DB) *oauth.OauthHandler {
 	oauthRefreshTokenRepository := oauth2.NewOauthRefreshTokenRepository(db)
 	userRepository := user.NewUserRepository(db)
 	userUsecase := usecase.NewUserUsecase(userRepository)
-	oauthUsecase := oauth3.NewOauthUsecase(oauthClientRepository, oauthAccessTokenRepository, oauthRefreshTokenRepository, userUsecase)
+	adminRepository := admin.NewAdminRepository(db)
+	adminUsecase := admin2.NewAdminUsecase(adminRepository)
+	oauthUsecase := oauth3.NewOauthUsecase(oauthClientRepository, oauthAccessTokenRepository, oauthRefreshTokenRepository, userUsecase, adminUsecase)
 	oauthHandler := oauth.NewOauthHandler(oauthUsecase)
 	return oauthHandler
 }
