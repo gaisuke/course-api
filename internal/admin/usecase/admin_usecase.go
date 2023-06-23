@@ -39,6 +39,10 @@ func (usecase *adminUsecase) Create(dto dto.AdminRequestBody) (*entity.Admin, *r
 		Password: string(hashedPassword),
 	}
 
+	if dto.CreatedBy != nil {
+		dataAdmin.CreatedByID = dto.CreatedBy
+	}
+
 	admin, errCreateAdmin := usecase.repository.Create(dataAdmin)
 	if errCreateAdmin != nil {
 		return nil, errCreateAdmin
@@ -99,6 +103,10 @@ func (usecase *adminUsecase) Update(id int, dto dto.AdminRequestBody) (*entity.A
 			}
 		}
 		admin.Password = string(hashedPassword)
+	}
+
+	if dto.UpdatedBy != nil {
+		admin.UpdatedByID = dto.UpdatedBy
 	}
 
 	updateAdmin, err := usecase.repository.Update(*admin)

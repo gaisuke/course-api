@@ -3,7 +3,9 @@ package admin
 import (
 	dto "course-api/internal/admin/dto"
 	usecase "course-api/internal/admin/usecase"
+	middleware "course-api/internal/middleware"
 	response "course-api/pkg/response"
+	"course-api/pkg/utils"
 	"net/http"
 	"strconv"
 
@@ -20,11 +22,15 @@ func NewAdminHandler(usecase usecase.AdminUsecase) *AdminHandler {
 
 func (handler *AdminHandler) Route(r *gin.RouterGroup) {
 	adminRouter := r.Group("/api/v1")
-	adminRouter.GET("/admins", handler.FindAll)
-	adminRouter.GET("/admins/:id", handler.FindOneByID)
-	adminRouter.POST("/admins", handler.Create)
-	adminRouter.PATCH("/admins/:id", handler.Update)
-	adminRouter.DELETE("/admins/:id", handler.Delete)
+
+	adminRouter.Use(middleware.AuthJwt, middleware.AuthAdmin)
+	{
+		adminRouter.GET("/admins", handler.FindAll)
+		adminRouter.GET("/admins/:id", handler.FindOneByID)
+		adminRouter.POST("/admins", handler.Create)
+		adminRouter.PATCH("/admins/:id", handler.Update)
+		adminRouter.DELETE("/admins/:id", handler.Delete)
+	}
 }
 
 func (handler *AdminHandler) Create(ctx *gin.Context) {
@@ -39,6 +45,10 @@ func (handler *AdminHandler) Create(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
+
+	user := utils.GetCurrentUser(ctx)
+
+	input.CreatedBy = &user.ID
 
 	_, err := handler.usecase.Create(input)
 	if err != nil {
@@ -71,6 +81,10 @@ func (handler *AdminHandler) Update(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
+
+	user := utils.GetCurrentUser(ctx)
+
+	input.UpdatedBy = &user.ID
 
 	data, err := handler.usecase.Update(id, input)
 	if err != nil {
