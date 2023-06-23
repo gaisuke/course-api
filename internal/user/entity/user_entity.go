@@ -17,7 +17,7 @@ type User struct {
 	// CreatedBy       *adminEntity.Admin `json:"-" gorm:"foreignKey:CreatedByID;references:ID"`
 	// UpdatedByID     *int64             `json:"updated_by" gorm:"column:updated_by"`
 	// UpdatedBy       *adminEntity.Admin `json:"-" gorm:"foreignKey:UpdatedByID;references:ID"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt *time.Time     `json:"created_at"`
+	UpdatedAt *time.Time     `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
