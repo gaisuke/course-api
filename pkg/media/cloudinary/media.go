@@ -74,7 +74,6 @@ func (usecase *mediaUsecase) Upload(file multipart.FileHeader) (*string, *respon
 			ctx,
 			binary,
 			uploader.UploadParams{
-				Folder:   "course-api",
 				PublicID: uuid.New().String(),
 			})
 		if err != nil {
