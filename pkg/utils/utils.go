@@ -2,6 +2,7 @@ package utils
 
 import (
 	"math/rand"
+	"path/filepath"
 
 	oauthDto "course-api/internal/oauth/dto"
 
@@ -47,4 +48,9 @@ func Paginate(offset, limit int) func(db *gorm.DB) *gorm.DB {
 func GetCurrentUser(ctx *gin.Context) *oauthDto.MapClaimsResponse {
 	user, _ := ctx.Get("user")
 	return user.(*oauthDto.MapClaimsResponse)
+}
+
+func GetFileName(filename string) string {
+	file := filepath.Base(filename)
+	return file[:len(file)-len(filepath.Ext(file))]
 }
