@@ -1,4 +1,4 @@
-package usecase
+package user
 
 import (
 	dto "course-api/internal/user/dto"

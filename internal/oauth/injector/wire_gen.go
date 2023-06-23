@@ -13,7 +13,7 @@ import (
 	oauth2 "course-api/internal/oauth/repository"
 	oauth3 "course-api/internal/oauth/usecase"
 	"course-api/internal/user/repository"
-	"course-api/internal/user/usecase"
+	user2 "course-api/internal/user/usecase"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +24,7 @@ func InitializedService(db *gorm.DB) *oauth.OauthHandler {
 	oauthAccessTokenRepository := oauth2.NewOauthAccessTokenRepository(db)
 	oauthRefreshTokenRepository := oauth2.NewOauthRefreshTokenRepository(db)
 	userRepository := user.NewUserRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	userUsecase := user2.NewUserUsecase(userRepository)
 	adminRepository := admin.NewAdminRepository(db)
 	adminUsecase := admin2.NewAdminUsecase(adminRepository)
 	oauthUsecase := oauth3.NewOauthUsecase(oauthClientRepository, oauthAccessTokenRepository, oauthRefreshTokenRepository, userUsecase, adminUsecase)
