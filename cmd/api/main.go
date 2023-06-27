@@ -6,6 +6,7 @@ import (
 	admin "course-api/internal/admin/injector"
 	forgotPassword "course-api/internal/forgot_password/injector"
 	oauth "course-api/internal/oauth/injector"
+	product "course-api/internal/product/injector"
 	productCategory "course-api/internal/product_category/injector"
 	register "course-api/internal/register/injector"
 
@@ -21,6 +22,7 @@ func main() {
 	oauth.InitializedService(db).Route(&r.RouterGroup)
 	forgotPassword.InitializedService(db).Route(&r.RouterGroup)
 	productCategory.InitializedService(db).Route(&r.RouterGroup)
+	product.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run()
 }
