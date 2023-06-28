@@ -50,7 +50,7 @@ func (handler *ForgotPasswordHandler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response.Response(
 		http.StatusOK,
 		http.StatusText(http.StatusOK),
-		"Forgot password success, silahkan cek email anda untuk reset password",
+		"Silahkan cek email anda untuk reset password",
 	))
 }
 

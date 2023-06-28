@@ -2,7 +2,7 @@ package forgot_password
 
 import (
 	entity "course-api/internal/forgot_password/entity"
-	response "course-api/pkg/response"
+	"course-api/pkg/response"
 
 	"gorm.io/gorm"
 )
