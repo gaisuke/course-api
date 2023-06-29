@@ -3,6 +3,7 @@ package user
 import (
 	entity "course-api/internal/user/entity"
 	"course-api/pkg/response"
+	"course-api/pkg/utils"
 
 	"gorm.io/gorm"
 )
@@ -14,7 +15,7 @@ type UserRepository interface {
 	Create(entity entity.User) (*entity.User, *response.Error)
 	FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error)
 	Update(entity entity.User) (*entity.User, *response.Error)
-	Delete(entity entity.User) (*entity.User, *response.Error)
+	Delete(entity entity.User) *response.Error
 	TotalCountUser() int64
 }
 
@@ -35,13 +36,23 @@ func (repository *userRepository) Create(entity entity.User) (*entity.User, *res
 }
 
 // Delete implements UserRepository.
-func (*userRepository) Delete(entity entity.User) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (repository *userRepository) Delete(entity entity.User) *response.Error {
+	if err := repository.db.Delete(&entity).Error; err != nil {
+		return &response.Error{
+			Code: 500,
+			Err:  err,
+		}
+	}
+	return nil
 }
 
 // FindAll implements UserRepository.
-func (*userRepository) FindAll(offset int, limit int) []entity.User {
-	panic("unimplemented")
+func (repository *userRepository) FindAll(offset int, limit int) []entity.User {
+	var users []entity.User
+
+	repository.db.Scopes(utils.Paginate(offset, limit)).Find(&users)
+
+	return users
 }
 
 // FindByEmail implements UserRepository.
@@ -59,8 +70,17 @@ func (repository *userRepository) FindByEmail(email string) (*entity.User, *resp
 }
 
 // FindOneByCodeVerified implements UserRepository.
-func (*userRepository) FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (repository *userRepository) FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error) {
+	var user entity.User
+
+	if err := repository.db.Where("code_verified = ?", codeVerified).First(&user).Error; err != nil {
+		return nil, &response.Error{
+			Code: 500,
+			Err:  err,
+		}
+	}
+
+	return &user, nil
 }
 
 // FindOneById implements UserRepository.
@@ -76,7 +96,7 @@ func (repository *userRepository) FindOneById(id int) (*entity.User, *response.E
 }
 
 // TotalCountUser implements UserRepository.
-func (*userRepository) TotalCountUser() int64 {
+func (repository *userRepository) TotalCountUser() int64 {
 	panic("unimplemented")
 }
 

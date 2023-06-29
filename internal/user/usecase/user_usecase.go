@@ -56,6 +56,10 @@ func (usecase *userUsecase) Create(dto dto.UserRequestBody) (*entity.User, *resp
 		CodeVerified: utils.RandString(32),
 	}
 
+	if dto.CreatedBy != nil {
+		user.CreatedByID = dto.CreatedBy
+	}
+
 	dataUser, err := usecase.repository.Create(user)
 	if err != nil {
 		return nil, &response.Error{
@@ -68,13 +72,26 @@ func (usecase *userUsecase) Create(dto dto.UserRequestBody) (*entity.User, *resp
 }
 
 // Delete implements UserUsecase.
-func (*userUsecase) Delete(id int) *response.Error {
-	panic("unimplemented")
+func (usecase *userUsecase) Delete(id int) *response.Error {
+	user, err := usecase.repository.FindOneById(id)
+	if err != nil {
+		return err
+	}
+
+	err = usecase.repository.Delete(*user)
+	if err != nil {
+		return &response.Error{
+			Code: 500,
+			Err:  err.Err,
+		}
+	}
+
+	return nil
 }
 
 // FindAll implements UserUsecase.
-func (*userUsecase) FindAll(offset int, limit int) []entity.User {
-	panic("unimplemented")
+func (usecase *userUsecase) FindAll(offset int, limit int) []entity.User {
+	return usecase.repository.FindAll(offset, limit)
 }
 
 // FindByEmail implements UserUsecase.
@@ -83,8 +100,8 @@ func (usecase *userUsecase) FindByEmail(email string) (*entity.User, *response.E
 }
 
 // FindOneByCodeVerified implements UserUsecase.
-func (*userUsecase) FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error) {
-	panic("unimplemented")
+func (usecase *userUsecase) FindOneByCodeVerified(codeVerified string) (*entity.User, *response.Error) {
+	return usecase.repository.FindOneByCodeVerified(codeVerified)
 }
 
 // FindOneById implements UserUsecase.
@@ -93,7 +110,7 @@ func (usecase *userUsecase) FindOneById(id int) (*entity.User, *response.Error) 
 }
 
 // TotalCountUser implements UserUsecase.
-func (*userUsecase) TotalCountUser() int64 {
+func (usecase *userUsecase) TotalCountUser() int64 {
 	panic("unimplemented")
 }
 
@@ -105,6 +122,10 @@ func (usecase *userUsecase) Update(id int, dto dto.UserUpdateRequestBody) (*enti
 		return nil, err
 	}
 
+	if user.Email != dto.Email {
+		user.Email = dto.Email
+	}
+
 	if dto.Password != nil {
 		hashedPassword, errHashedPassword := bcrypt.GenerateFromPassword([]byte(*dto.Password), bcrypt.DefaultCost)
 		if errHashedPassword != nil {
@@ -114,6 +135,10 @@ func (usecase *userUsecase) Update(id int, dto dto.UserUpdateRequestBody) (*enti
 			}
 		}
 		user.Password = string(hashedPassword)
+	}
+
+	if dto.UpdatedBy != nil {
+		user.UpdatedByID = dto.UpdatedBy
 	}
 
 	updateUser, err := usecase.repository.Update(*user)

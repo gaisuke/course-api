@@ -10,6 +10,7 @@ import (
 	product "course-api/internal/product/injector"
 	productCategory "course-api/internal/product_category/injector"
 	register "course-api/internal/register/injector"
+	user "course-api/internal/user/injector"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +26,7 @@ func main() {
 	productCategory.InitializedService(db).Route(&r.RouterGroup)
 	product.InitializedService(db).Route(&r.RouterGroup)
 	discount.InitializedService(db).Route(&r.RouterGroup)
+	user.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run()
 }
