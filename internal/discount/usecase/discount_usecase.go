@@ -101,6 +101,10 @@ func (usecase *discountUsecase) Update(id int, dto dto.DiscountRequestBody) (*en
 		discount.EndDate = dto.EndDate
 	}
 
+	if dto.UpdatedBy != nil {
+		discount.UpdatedByID = dto.UpdatedBy
+	}
+
 	data, err := usecase.repository.Update(*discount)
 	if err != nil {
 		return nil, err
