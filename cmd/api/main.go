@@ -4,6 +4,7 @@ import (
 	"course-api/pkg/db/mysql"
 
 	admin "course-api/internal/admin/injector"
+	cart "course-api/internal/cart/injector"
 	discount "course-api/internal/discount/injector"
 	forgotPassword "course-api/internal/forgot_password/injector"
 	oauth "course-api/internal/oauth/injector"
@@ -27,6 +28,7 @@ func main() {
 	product.InitializedService(db).Route(&r.RouterGroup)
 	discount.InitializedService(db).Route(&r.RouterGroup)
 	user.InitializedService(db).Route(&r.RouterGroup)
+	cart.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run()
 }
