@@ -9,7 +9,7 @@ import (
 )
 
 type CartRepository interface {
-	FindAllByUserId(userId, limit, offset int) []entity.Cart
+	FindAllByUserId(userId, offset, limit int) []entity.Cart
 	FindOneById(id int) (*entity.Cart, *response.Error)
 	Create(entity entity.Cart) (*entity.Cart, *response.Error)
 	Update(entity entity.Cart) (*entity.Cart, *response.Error)
@@ -21,7 +21,7 @@ type cartRepository struct {
 	db *gorm.DB
 }
 
-// Create implements CartRepository.
+// Create implements CartRepository
 func (repository *cartRepository) Create(entity entity.Cart) (*entity.Cart, *response.Error) {
 	if err := repository.db.Create(&entity).Error; err != nil {
 		return nil, &response.Error{
@@ -33,7 +33,7 @@ func (repository *cartRepository) Create(entity entity.Cart) (*entity.Cart, *res
 	return &entity, nil
 }
 
-// Delete implements CartRepository.
+// Delete implements CartRepository
 func (repository *cartRepository) Delete(entity entity.Cart) *response.Error {
 	if err := repository.db.Delete(&entity).Error; err != nil {
 		return &response.Error{
@@ -45,7 +45,7 @@ func (repository *cartRepository) Delete(entity entity.Cart) *response.Error {
 	return nil
 }
 
-// DeleteByUserId implements CartRepository.
+// DeleteByUserId implements CartRepository
 func (repository *cartRepository) DeleteByUserId(userId int) *response.Error {
 	var cart entity.Cart
 
@@ -59,11 +59,11 @@ func (repository *cartRepository) DeleteByUserId(userId int) *response.Error {
 	return nil
 }
 
-// FindAllByUserId implements CartRepository.
-func (repository *cartRepository) FindAllByUserId(userId int, limit int, offset int) []entity.Cart {
+// FindAllByUserId implements CartRepository
+func (repository *cartRepository) FindAllByUserId(userId, offset, limit int) []entity.Cart {
 	var carts []entity.Cart
 
-	repository.db.Scopes(utils.Paginate(limit, offset)).
+	repository.db.Scopes(utils.Paginate(offset, limit)).
 		Preload("User").
 		Preload("Product").
 		Where("user_id = ?", userId).
@@ -72,7 +72,7 @@ func (repository *cartRepository) FindAllByUserId(userId int, limit int, offset 
 	return carts
 }
 
-// FindOneById implements CartRepository.
+// FindOneById implements CartRepository
 func (repository *cartRepository) FindOneById(id int) (*entity.Cart, *response.Error) {
 	var cart entity.Cart
 
@@ -86,7 +86,7 @@ func (repository *cartRepository) FindOneById(id int) (*entity.Cart, *response.E
 	return &cart, nil
 }
 
-// Update implements CartRepository.
+// Update implements CartRepository
 func (repository *cartRepository) Update(entity entity.Cart) (*entity.Cart, *response.Error) {
 	if err := repository.db.Save(&entity).Error; err != nil {
 		return nil, &response.Error{

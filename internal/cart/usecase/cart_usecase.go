@@ -1,27 +1,28 @@
 package cart
 
 import (
+	"errors"
+
 	dto "course-api/internal/cart/dto"
 	entity "course-api/internal/cart/entity"
 	repository "course-api/internal/cart/repository"
 	"course-api/pkg/response"
-	"errors"
 )
 
 type CartUsecase interface {
-	FindAllByUserId(userId, limit, offset int) []entity.Cart
+	FindAllByUserId(userId, offset, limit int) []entity.Cart
 	FindOneById(id int) (*entity.Cart, *response.Error)
 	Create(dto dto.CartRequestBody) (*entity.Cart, *response.Error)
-	Update(id int, dto dto.CartRequestUpdateBody) (*entity.Cart, *response.Error)
-	Delete(id, userId int) *response.Error
+	Delete(id int, userId int) *response.Error
 	DeleteByUserId(userId int) *response.Error
+	Update(id int, dto dto.CartRequestUpdateBody) (*entity.Cart, *response.Error)
 }
 
 type cartUsecase struct {
 	repository repository.CartRepository
 }
 
-// Create implements CartUsecase.
+// Create implements CartUsecase
 func (usecase *cartUsecase) Create(dto dto.CartRequestBody) (*entity.Cart, *response.Error) {
 	cart := &entity.Cart{
 		UserID:      &dto.UserID,
@@ -32,6 +33,7 @@ func (usecase *cartUsecase) Create(dto dto.CartRequestBody) (*entity.Cart, *resp
 	}
 
 	data, err := usecase.repository.Create(*cart)
+
 	if err != nil {
 		return nil, err
 	}
@@ -39,9 +41,11 @@ func (usecase *cartUsecase) Create(dto dto.CartRequestBody) (*entity.Cart, *resp
 	return data, nil
 }
 
-// Delete implements CartUsecase.
+// Delete implements CartUsecase
 func (usecase *cartUsecase) Delete(id int, userId int) *response.Error {
+	// Cari datanya terlebih dahulu berdasarkan id
 	cart, err := usecase.repository.FindOneById(id)
+
 	if err != nil {
 		return err
 	}
@@ -56,6 +60,7 @@ func (usecase *cartUsecase) Delete(id int, userId int) *response.Error {
 	}
 
 	err = usecase.repository.Delete(*cart)
+
 	if err != nil {
 		return err
 	}
@@ -63,9 +68,10 @@ func (usecase *cartUsecase) Delete(id int, userId int) *response.Error {
 	return nil
 }
 
-// DeleteByUserId implements CartUsecase.
+// DeleteByUserId implements CartUsecase
 func (usecase *cartUsecase) DeleteByUserId(userId int) *response.Error {
 	err := usecase.repository.DeleteByUserId(userId)
+
 	if err != nil {
 		return err
 	}
@@ -73,19 +79,20 @@ func (usecase *cartUsecase) DeleteByUserId(userId int) *response.Error {
 	return nil
 }
 
-// FindAllByUserId implements CartUsecase.
-func (usecase *cartUsecase) FindAllByUserId(userId int, limit int, offset int) []entity.Cart {
-	return usecase.repository.FindAllByUserId(userId, limit, offset)
+// FindAllByUserId implements CartUsecase
+func (usecase *cartUsecase) FindAllByUserId(userId, offset, limit int) []entity.Cart {
+	return usecase.repository.FindAllByUserId(userId, offset, limit)
 }
 
-// FindOneById implements CartUsecase.
+// FindOneById implements CartUsecase
 func (usecase *cartUsecase) FindOneById(id int) (*entity.Cart, *response.Error) {
 	return usecase.repository.FindOneById(id)
 }
 
-// Update implements CartUsecase.
+// Update implements CartUsecase
 func (usecase *cartUsecase) Update(id int, dto dto.CartRequestUpdateBody) (*entity.Cart, *response.Error) {
 	cart, err := usecase.repository.FindOneById(id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +108,7 @@ func (usecase *cartUsecase) Update(id int, dto dto.CartRequestUpdateBody) (*enti
 	cart.UpdatedByID = dto.UserID
 
 	updateCart, err := usecase.repository.Update(*cart)
+
 	if err != nil {
 		return nil, err
 	}

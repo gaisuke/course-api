@@ -1,13 +1,14 @@
 package cart
 
 import (
+	"net/http"
+	"strconv"
+
 	dto "course-api/internal/cart/dto"
 	usecase "course-api/internal/cart/usecase"
 	"course-api/internal/middleware"
 	"course-api/pkg/response"
 	"course-api/pkg/utils"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +39,7 @@ func (handler *CartHandler) FindByUserId(ctx *gin.Context) {
 
 	user := utils.GetCurrentUser(ctx)
 
-	data := handler.usecase.FindAllByUserId(int(user.ID), limit, offset)
+	data := handler.usecase.FindAllByUserId(int(user.ID), offset, limit)
 
 	ctx.JSON(http.StatusOK, response.Response(
 		http.StatusOK,
@@ -61,11 +62,11 @@ func (handler *CartHandler) Create(ctx *gin.Context) {
 	}
 
 	user := utils.GetCurrentUser(ctx)
-
 	input.UserID = user.ID
-	input.CreatedBy = user.ID
+	input.CreatedBy = input.UserID
 
 	data, err := handler.usecase.Create(input)
+
 	if err != nil {
 		ctx.JSON(int(err.Code), response.Response(
 			int(err.Code),
@@ -89,6 +90,7 @@ func (handler *CartHandler) Delete(ctx *gin.Context) {
 	user := utils.GetCurrentUser(ctx)
 
 	err := handler.usecase.Delete(id, int(user.ID))
+
 	if err != nil {
 		ctx.JSON(int(err.Code), response.Response(
 			int(err.Code),
@@ -126,6 +128,7 @@ func (handler *CartHandler) Update(ctx *gin.Context) {
 	input.UserID = &user.ID
 
 	data, err := handler.usecase.Update(id, input)
+
 	if err != nil {
 		ctx.JSON(int(err.Code), response.Response(
 			int(err.Code),
