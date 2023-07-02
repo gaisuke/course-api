@@ -8,6 +8,7 @@ import (
 	discount "course-api/internal/discount/injector"
 	forgotPassword "course-api/internal/forgot_password/injector"
 	oauth "course-api/internal/oauth/injector"
+	order "course-api/internal/order/injector"
 	product "course-api/internal/product/injector"
 	productCategory "course-api/internal/product_category/injector"
 	register "course-api/internal/register/injector"
@@ -29,6 +30,7 @@ func main() {
 	discount.InitializedService(db).Route(&r.RouterGroup)
 	user.InitializedService(db).Route(&r.RouterGroup)
 	cart.InitializedService(db).Route(&r.RouterGroup)
+	order.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run()
 }
